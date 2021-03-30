@@ -10,8 +10,8 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    name: 'fileList1',
-    component: fileList1
+    name: 'fileList',
+    component: fileList
   },
 	{
 		path: '/fileList',
