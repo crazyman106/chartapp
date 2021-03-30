@@ -1,0 +1,31 @@
+{
+    "label": "文件操作",
+    "thumbnailClass": "ribbon-thumbnail-spreadsettings",
+    "commandGroup": {
+        "children": [
+            {
+                "commands": ["GetTemplates"]
+            },
+            {
+                "type": "separator"
+            },
+            {
+                "commands": ["ExportWorkbookPDF", "ExportPDFList"]
+            },
+            {
+                "type": "separator"
+            },
+            {
+                "direction": "vertical",
+                "commands": ["ExportSheetImage", "ExportRangeImage"]
+            },
+            {
+                "type": "separator"
+            },
+            {
+                "direction": "vertical",
+                "commands": []
+            }
+        ]
+    }
+}
