@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import webExcel from '../views/WebExcel.vue'
+import webExcel from '../views/webExcel.vue'
 
 import fileList from '../views/fileList.vue'
 import fileList1 from '../views/fileList1.vue'
@@ -10,8 +10,8 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    name: 'fileList',
-    component: fileList
+    name: 'webExcel',
+    component: webExcel
   },
 	{
 		path: '/fileList',
