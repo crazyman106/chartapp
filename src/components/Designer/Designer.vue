@@ -20,7 +20,7 @@ import * as GC from "@grapecity/spread-sheets"
 import * as ExcelIO from "@grapecity/spread-excelio"
 
 import CustomerConfig from './customer_config'
-
+import s from './e.json'
 let DefaultConfig = GC.Spread.Sheets.Designer.DefaultConfig;
 DefaultConfig.ribbon.push(CustomerConfig.ribbon)
 DefaultConfig.commandMap = {};
@@ -39,11 +39,15 @@ export default {
       designer: null,
     };
   },
+	mounted() {
+			this.$emit('childEvent', this.designer);
+	},
   methods: {
     designerInitialized(value) {
       this.designer = value;
       var spread = this.designer.getWorkbook();
       spread.options.newTabVisible = false;
+			//spread.fromJSON(s);
       var sheet = spread.getActiveSheet();
       sheet.frozenColumnCount(2);
       this._registEvent(spread)

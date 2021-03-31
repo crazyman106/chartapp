@@ -4,7 +4,6 @@ import Home from '../views/Home.vue'
 import webExcel from '../views/webExcel.vue'
 
 import fileList from '../views/fileList.vue'
-import fileList1 from '../views/fileList1.vue'
 Vue.use(VueRouter)
 
   const routes = [
