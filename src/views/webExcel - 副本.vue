@@ -5,7 +5,17 @@
 			<fileList @choseFile="choseFile" />
 		</el-aside>
 		<el-main>
-			<Designer @childEvent="getDes"></Designer>
+		<el-tabs v-model="editableTabsValue" type="card" editable @edit="handleTabsEdit">
+		  <el-tab-pane
+			:key="item.name"
+			v-for="(item, index) in editableTabs"
+			:label="item.title"
+			:name="item.name"
+		  >
+			<extab ></extab>
+		  </el-tab-pane>
+		</el-tabs>
+		
       </el-main>
     </el-container>
   </div>
@@ -124,42 +134,17 @@ export default {
 				self.$msg(e);
 			});
 		},
-		imcvs(json){
-			var test = [
-			       { "Series0": 2, "Series1": 1 },
-			       { "Series0": 4, "Series1": 2 },
-			       { "Series0": 3, "Series1": 4 }
-			            ];
+		imcvs(dataBlob){
 			let self = this;
-			let sheet = this.spread.getSheet(0);
-			console.log(sheet);
-			sheet.autoGenerateColumns = true;
-			/* sheet.setCsv(
-				1,1,",","\r\n",","
-			); */
-			var reader = new FileReader();
-			reader.onload = function(event){
-			    var str = reader.result;
-				var rows = str.split("\r\n");
-				var strArray=[];
-				for(var i in rows){
-					var o =new Object();
-					var liArray = rows[i].split(",");
-					for(var j in liArray){
-						var c = liArray[j];
-						if(c!=undefined && c!=null && c!='' && c.length>=3){
-							o[""+j] =c.substr(1,c.length-2);
-						}
-					}
-					for(var m in o){
-						strArray.push(o);
-						break;
-					}
-				}
-				console.log(strArray);
-				sheet.setDataSource(strArray, true);
-			};
-			reader.readAsText(json);
+			let excelIO = new ExcelIO.IO();
+			excelIO.open(dataBlob, function (json) {
+				console.log(json);
+				let workbookObj = json;
+				self.spread.fromJSON(workbookObj);
+			}, function (e) {
+				console.log(e);
+				self.$msg(e);
+			});
 		}
 	}
 };
