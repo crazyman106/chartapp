@@ -77,21 +77,21 @@ export default {
 			console.log(path);
 		},
 		fileChange(e) {
-      try {
-        const fu = document.getElementById('file')
-        if (fu == null) return
-				//console.log(fu.files)
-        this.fileDeal(fu.files)
-      } catch (error) {
-        console.debug('choice file err:', error)
-      }
-    },
-		getFile(){
-			this.openTree=false;	
-			this.fileTree=[];
-			this.openTree=true;
+		  try {
+			const fu = document.getElementById('file')
+			if (fu == null) return
+					//console.log(fu.files)
+			this.fileDeal(fu.files)
+		  } catch (error) {
+			console.debug('choice file err:', error)
+		  }
+		},
+		ajaxImpPath(type){
+			//this.openTree=false;	
+			//this.fileTree=[];
+			//this.openTree=true;
 			var $this = this;
-			this.$get('/api/app/ajaxGetPath?path='+this.path,{
+			this.$get('/api/app/ajaxImpPath?path='+this.path+"&type="+type,{
 			},function(data){
 				if(data.flag=="true"){
 					//$this.fileDeal(data.data);
@@ -101,9 +101,20 @@ export default {
 				}
 			});
 		},
-		ajaxFile(path,call){
+		ajaxGetPathInit(){
 			var $this = this;
-			this.$get('/api/app/ajaxGetPath?path='+path,{
+			this.$get('/api/app/ajaxGetPathInit',{
+			},function(data){
+				if(data.flag=="true"){
+					$this.resolveInit(data.data);
+				}else{
+					$this.$msg(data.msg);
+				}
+			});
+		},
+		ajaxGetPathChile(path,call,type){
+			var $this = this;
+			this.$get('/api/app/ajaxGetPathChile?path='+path+"&type="+type,{
 			},function(data){
 				//console.log(data);
 				if(data.flag=="true"){
@@ -135,7 +146,7 @@ export default {
 				cancelButtonText: '取消'
 			}).then(({ value }) => {
 				$this.path = value;
-				$this.getFile();
+				$this.ajaxImpPath(1);
 			}).catch(() => {
 						 
 			});
@@ -145,15 +156,17 @@ export default {
 			var url;
 			if (node.level === 0) {
 				this.resolveInit = resolve;
+				this.ajaxGetPathInit();
 				return ;
 			}else{
 				url= node.data.path;
 			}
 			//console.log(node);
-			this.ajaxFile(url,function(data){
+			this.ajaxGetPathChile(url,function(data){
 				resolve(data);
 			});
-    },
+		},
+
 		spreadInitHandle: function (spread) {
 			this.spread = spread
 			this.spread.fromJSON(s)

@@ -20,6 +20,9 @@ Vue.prototype.$axios = axios
 Vue.prototype.$msg = function (msg){
 	alert(msg);
 }
+Vue.prototype.$err = function (msg){
+	console.log(msg);
+}
 let headers={
 			Accept: "application/x-www-form-urlencoded",
       "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"

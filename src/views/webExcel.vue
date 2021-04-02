@@ -121,7 +121,7 @@ export default {
 				self.spread.fromJSON(workbookObj);
 			}, function (e) {
 				console.log(e);
-				self.$msg(e);
+				self.$err(e);
 			});
 		},
 		imcvs(json){
