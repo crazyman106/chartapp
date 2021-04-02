@@ -54,7 +54,7 @@ export default {
 				responseType: "blob"
 			}).then(function(response) {
 				console.log(response);
-				$this.$emit('choseFile', response.data);
+				$this.$emit('choseFile', response.data,path);
 			}).catch(function(err) {
 				console.log(err);
 			});
