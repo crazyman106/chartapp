@@ -34,13 +34,35 @@ export default {
   name: "Home",
   data: function () {
     return {
-      styleInfo: { height: "650px", width: "100%", border: "solid gray 1px" },
+      styleInfo: { height:"", width: "100%", border: "solid gray 1px" },
       config: DefaultConfig,
       designer: null,
+	  height:0,
+	  h:70
     };
   },
+  created(){
+
+  },
 	mounted() {
-			this.$emit('childEvent', this.designer);
+	  const self = this;
+	 /* window.onresize = () => {
+		return (() => {
+			var ht = `${document.documentElement.clientHeight}`;
+			var h = ht-self.h;
+			if(h<=400) h=400;
+			self.styleInfo.height=h+"px";
+			console.log("height-33--",self.styleInfo);
+			self.designer.refresh();
+		})();
+	  };
+	  var ht = `${document.documentElement.clientHeight}`;
+	  var h = ht-self.h;
+	  if(h<=400) h=400; */
+	  self.styleInfo.height=self.$bodyHeightTab+"px";
+	  console.log("height-33--",self.styleInfo);
+	  self.designer.refresh();
+	  this.$emit('childEvent', this.designer);
 	},
   methods: {
     designerInitialized(value) {
@@ -63,5 +85,6 @@ export default {
 <style>
 .designer{
     text-align:left;
+	width:100%;
 }
 </style>

@@ -1,9 +1,11 @@
 <template>
   <div class="webExcel">
     <el-container>
-			<el-aside width="200px">
-				<fileList @choseFile="choseFile" />
+			<div class="bg">
+			<el-aside  :style="{height: height}">
+				<fileList @choseFile="choseFile"  />
 			</el-aside>
+			</div>
 			<el-main>
 				<el-tabs v-model="editableTabsValue" type="card" editable @edit="handleTabsEdit">
 					<el-tab-pane
@@ -52,8 +54,12 @@ export default {
 				content: ''
 			}],
 			choseTabCurrent:{},
-		  tabIndex: 1
+		  tabIndex: 1,
+			height:this.$bodyHeightLeft+"px"
 	  }
+	},
+	mounted() {
+
 	},
 	methods: {
 		getTabsData(o,e){
@@ -144,11 +150,15 @@ export default {
   text-align: center;
   line-height: 60px;
 }
+.bg{
+	border: #e9eef3 solid 5px;
+}
 .el-aside {
-  background-color: #d3dce6;
+  background-color: #fff;
   color: #333;
   text-align: center;
   line-height: 50px;
+	width:250px !important;
 }
 .el-main {
   background-color: #e9eef3;

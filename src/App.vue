@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-	
+
 </script>
 <style>
 #app {
@@ -13,8 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+	min-width:1100px;
 }
-
+.is-expanded .el-tree-node__children {
+	display: inline !important;
+}
 #nav {
   padding: 30px;
 }
@@ -26,5 +29,14 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+.el-main{
+	padding:5px !important;
+}
+.el-tabs__header{
+	margin:0 0 0 5px !important;
+}
+.extab{
+   
 }
 </style>

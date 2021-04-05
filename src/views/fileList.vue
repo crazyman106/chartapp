@@ -176,28 +176,7 @@ export default {
 }
 </script>
 
-<style scoped>
-  .componentContainer {
-    position: absolute;
-    padding: 10px;
-    left: 242px;
-    top: 0;
-    bottom: 20px;
-    right: 0;
-  }
-  .spreadContainer {
-    padding: 10px;
-    box-shadow: 0 0 20px grey;
-  }
-  .spreadContainer{
-    position: absolute;
-    left: 0px;
-    right: 30px;
-    top: 100px;
-    bottom: 10px;
-  }
-  .spreadHost{
-    width: 100%;
-    height: 100%;
-  }
+<style >
+	.fileList{
+	}
 </style>

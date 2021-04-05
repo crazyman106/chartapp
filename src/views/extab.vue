@@ -27,11 +27,12 @@ export default {
 		filePath:"",
 	  editableTabsValue: '1',
 	  editableTabs: [{
-		title: 'Tab 1',
-		name: '1',
-		content: 'Tab 1 content'
+			title: 'Tab 1',
+			name: '1',
+			content: 'Tab 1 content'
 		}],
-		  tabIndex: 1
+		abIndex: 1,
+		num:200
 	  }
 	},
 	mounted() {
@@ -127,6 +128,8 @@ export default {
 			 this.imexcel(file);
 			}else if("fac"==type){
 				this.imfac(file);
+			}else if("txt"==type){
+					this.imtxt(file);
 			}else{
 				this.imcvs(file);
 			}
@@ -154,7 +157,7 @@ export default {
 				self.spread.fromJSON(workbookObj);
 			}, function (e) {
 				console.log(e);
-				self.$err(e);
+				self.$err("不支持的文件类型");
 			});
 		},
 		imcvs(json){
@@ -165,7 +168,8 @@ export default {
 			            ];
 			let self = this;
 			let sheet = this.spread.getSheet(0);
-			console.log(sheet);
+			let num = self.num;
+			console.log("sheet,num===",sheet,num);
 			sheet.autoGenerateColumns = true;
 			/* sheet.setCsv(
 				1,1,",","\r\n",","
@@ -184,6 +188,45 @@ export default {
 							o[""+j] =c.substr(1,c.length-2);
 						}
 					}
+					o = dealCol(liArray,num,o);
+					for(var m in o){
+						strArray.push(o);
+						break;
+					}
+				}
+				console.log(strArray);
+				sheet.setDataSource(strArray, true);
+			};
+			reader.readAsText(json);
+		},
+		dealCol(liArray,num,o){
+			let liLenth = liArray.length;
+			if(liLenth<num){
+				for(var nn=liLenth;nn<num;nn++){
+					o[""+nn] =null;
+				}
+			}
+			return o;
+		},
+		imtxt(json){
+			let self = this;
+			let sheet = this.spread.getSheet(0);
+			let num = self.num;
+			console.log("sheet,num===",sheet,num);
+			sheet.autoGenerateColumns = true;
+			var reader = new FileReader();
+			reader.onload = function(event){
+					var str = reader.result;
+				var rows = str.split("\r\n");
+				var strArray=[];
+				for(var i in rows){
+					var o =new Object();
+					var liArray = rows[i].split("	");
+					for(var j in liArray){
+						var c = liArray[j];
+							o[""+j] =c;
+					}
+					o = self.dealCol(liArray,num,o);
 					for(var m in o){
 						strArray.push(o);
 						break;
@@ -195,14 +238,10 @@ export default {
 			reader.readAsText(json);
 		},
 		imfac(json){
-			var test = [
-						{ "Series0": 2 },
-						{ "Series0": 4, "Series1": 2 },
-						{ "Series0": 3, "Series1": 4 }
-									];
 			let self = this;
 			let sheet = this.spread.getSheet(0);
-			//console.log(sheet);
+			let num = self.num;
+			console.log("sheet,num===",sheet,num);
 			sheet.autoGenerateColumns = false;
 			var reader = new FileReader();
 			reader.onload = function(event){
@@ -219,6 +258,7 @@ export default {
 							o[""+j] =c;
 						}
 					}
+					o = self.dealCol(liArray,num,o);
 					for(var m in o){
 						strArray.push(o);
 						break;
