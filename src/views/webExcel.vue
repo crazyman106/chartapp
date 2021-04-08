@@ -2,7 +2,7 @@
   <div class="webExcel">
     <el-container>
 			<div class="bg">
-			<el-aside  :style="{height: height}">
+			<el-aside  :style="{height:scrollerHeightWebData}">
 				<fileList @choseFile="choseFile"  />
 			</el-aside>
 			</div>
@@ -14,9 +14,7 @@
 					:label="item.title"
 					:name="item.name"
 					>
-
 					<div> <extab @getTabsData="getTabsData(arguments,item)"></extab> </div>
-					
 					</el-tab-pane>
 				</el-tabs>
 			</el-main>
@@ -35,6 +33,14 @@ import * as GC from '@grapecity/spread-sheets';
 import  "@grapecity/spread-sheets-print";
 import  "@grapecity/spread-sheets-pdf";
 import  "@grapecity/spread-sheets-charts";
+/* 
+{
+				title: '首页',
+				name: '1',
+				data:null,
+				path:'',
+				content: ''
+			} */
 
 export default {
   name: "WebExcel",
@@ -46,22 +52,29 @@ export default {
   data() {
 		return {
 			editableTabsValue: '1',
-			editableTabs: [{
-				title: '首页',
-				name: '1',
-				data:null,
-				path:'',
-				content: ''
-			}],
+			editableTabs: [],
 			choseTabCurrent:{},
 		  tabIndex: 1,
-			height:this.$bodyHeightLeft+"px"
+			scrollerHeightWebData:""
 	  }
 	},
+	computed: {
+    scrollerHeightWeb: function() {
+			return this.scrollerHeightWebData;
+    }
+  },
 	mounted() {
-
+		window.addEventListener('resize',() => this.measure1(), false)
+		this.measure1();
 	},
 	methods: {
+		measure1(){
+
+			const self = this
+			const tempH = `${document.documentElement.clientHeight}`-10
+			var l =tempH-20
+			this.scrollerHeightWebData=l+"px";
+		},
 		getTabsData(o,e){
 			console.log("1111",o,e);
 			var call =o[0];

@@ -7,7 +7,6 @@
 				<el-tree :data="fileTree"  ref="tree" :props="defaultProps" @node-click="handleNodeClick"
 					lazy 	v-if="openTree" 
 					:load="loadNode"
-					node-key="id"
 					:default-checked-keys="default_select"
 					@node-contextmenu="menu"
 					>
@@ -195,11 +194,11 @@ export default {
         console.log('右键被点击的value:', Node)
         console.log('右键被点击的element:', element)
         console.log('鼠标点击了树形结构图')
-				document.addEventListener('click', this.cancelAdd)
+				//document.addEventListener('click', this.cancelAdd)
     },
 		cancelAdd(){
-			 this.menuVisible = false
-       document.removeEventListener('click', this.cancelAdd) 
+			// this.menuVisible = false
+       //document.removeEventListener('click', this.cancelAdd) 
 		},
 		choseFile(path){
 			var $this = this;

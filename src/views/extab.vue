@@ -1,6 +1,6 @@
 <template>
   <div class="extab">
-			<Designer @childEvent="getDes"></Designer>
+			<Designer @childEvent="getDes" @saveFileTool="saveFileTool"></Designer>
   </div>
 </template>
 
@@ -47,23 +47,30 @@ export default {
 	},
 	methods: {
 		save(type) {
-      console.log(`content saved by `+type);
-    },
+			console.log(`content saved by `+type);
+		},
+		saveFileTool(e){
+			console.log("saveFileTool---",e);
+			var spread = e.getWorkbook();
+			if(this.filePath!=""){
+				this.savefileAjaxTool(spread);
+			}
+		},
 		savefile(e){
 			var key = window.event.keyCode ? window.event.keyCode : window.event.which;
-      if (key === 83 && e.ctrlKey) {
-        this.save('hot key')
-				if(this.filePath!=""){
-					this.savefileAjax();
-				}
-				e.preventDefault();
-				e.returnValue=false;
-				return false;
-      }
+/* 			if (key === 83 && e.ctrlKey) {
+				this.save('hot key')
+					if(this.filePath!=""){
+						this.savefileAjax();
+					}
+					e.preventDefault();
+					e.returnValue=false;
+					return false;
+			} */
 		},
-		savefileAjax(){
+		savefileAjaxTool(spread){
 			var $this= this;
-			var s = this.spread.toJSON();
+			var s = spread.toJSON();
 			console.log(this.filePath,s);
 			var json = JSON.stringify(s);
 			this.$post('/api/app/ajaxSaveFile',{
@@ -73,15 +80,30 @@ export default {
 				console.log(data);
 			});
 		},
+		savefileAjax(){
+			var $this= this;
+			var s = this.spread.toJSON();
+			console.log(this.filePath,s);
+			var json = JSON.stringify(s);
+			this.$post('/api/app/ajaxSaveFile',{
+					path:$this.filePath,
+					json:json
+				},function(data){
+					console.log(data);
+				},function(e){
+					console.log(e);
+				}
+			);
+		},
 		 handleTabsEdit(targetName, action) {
 			if (action === 'add') {
-			  let newTabName = ++this.tabIndex + '';
+/* 			  let newTabName = ++this.tabIndex + '';
 			  this.editableTabs.push({
 				title: 'New Tab',
 				name: newTabName,
 				content: 'New Tab content'
 			  });
-			  this.editableTabsValue = newTabName;
+			  this.editableTabsValue = newTabName; */
 			}
 			if (action === 'remove') {
 			  let tabs = this.editableTabs;

@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="designer">
     <gc-spread-sheets-designer
@@ -23,48 +21,40 @@ import CustomerConfig from './customer_config'
 import s from './e.json'
 let DefaultConfig = GC.Spread.Sheets.Designer.DefaultConfig;
 DefaultConfig.ribbon.push(CustomerConfig.ribbon)
-DefaultConfig.commandMap = {};
 
-Object.assign(DefaultConfig.commandMap, CustomerConfig.commandMap)
 
 // GC.Spread.Sheets.LicenseKey = "your spreadjs key"
 // GC.Spread.Sheets.Designer.LicenseKey = "your designer key";
-
+var callSaveFile=function(){}
 export default {
-  name: "Home",
+  name: "designer",
   data: function () {
     return {
-      styleInfo: { height:"", width: "100%", border: "solid gray 1px" },
+      styleInfo: { height:"200px", width: "100%", border: "solid gray 1px" },
       config: DefaultConfig,
-      designer: null,
-	  height:0,
-	  h:70
+      designer: null
     };
   },
   created(){
-
   },
 	mounted() {
 	  const self = this;
-	 /* window.onresize = () => {
-		return (() => {
-			var ht = `${document.documentElement.clientHeight}`;
-			var h = ht-self.h;
-			if(h<=400) h=400;
-			self.styleInfo.height=h+"px";
-			console.log("height-33--",self.styleInfo);
-			self.designer.refresh();
-		})();
-	  };
-	  var ht = `${document.documentElement.clientHeight}`;
-	  var h = ht-self.h;
-	  if(h<=400) h=400; */
-	  self.styleInfo.height=self.$bodyHeightTab+"px";
-	  console.log("height-33--",self.styleInfo);
-	  self.designer.refresh();
 	  this.$emit('childEvent', this.designer);
+		console.log("this.designer",this.designer)
+		window.addEventListener('resize',() => this.measure1(), false)
+		this.measure1();
+		callSaveFile = self.initSave;
 	},
   methods: {
+		measure1(){
+			var self =this;
+			var h= `${document.documentElement.clientHeight}`;
+			self.styleInfo.height=(h-61)+"px";
+			self.designer.refresh();
+		},
+		initSave(context){
+			this.$emit('saveFileTool',context);
+		},
     designerInitialized(value) {
       this.designer = value;
       var spread = this.designer.getWorkbook();
@@ -81,6 +71,21 @@ export default {
     }
   },
 };
+DefaultConfig.commandMap = {
+   cmdSaveData: {
+      title: "",
+      text: "保存",
+      iconClass: "cmdSaveData",
+      bigButton: "true",
+      commandName: "cmdSaveData",
+      execute: (context, propertyName, fontItalicChecked) => {
+        console.log("execute---",context,propertyName,fontItalicChecked);
+				callSaveFile(context);
+     }
+   }
+}
+
+Object.assign(DefaultConfig.commandMap, CustomerConfig.commandMap)
 </script>
 <style>
 .designer{
