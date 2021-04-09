@@ -70,9 +70,32 @@ export default {
 		},
 		savefileAjaxTool(spread){
 			var $this= this;
-			var s = spread.toJSON();
-			console.log(this.filePath,s);
-			var json = JSON.stringify(s);
+			spread = this.spread;
+			var obj = spread.toJSON();
+			var json ="";
+			if($this.filePath.endsWith("fac")){
+				let sheet = spread.getSheet(0);
+				var columnCount = obj.sheets.Sheet1.columnCount;
+				var rowCount = obj.sheets.Sheet1.rowCount;
+				var str = sheet.getCsv(0, 0, rowCount, columnCount, "\r\n", ",");
+				json = str;
+			}else if($this.filePath.endsWith("csv")){
+					let sheet = spread.getSheet(0);
+					var columnCount = obj.sheets.Sheet1.columnCount;
+					var rowCount = obj.sheets.Sheet1.rowCount;
+					var str = sheet.getCsv(0, 0, rowCount, columnCount, "\r\n", ",");
+					json = str;
+			}else if($this.filePath.endsWith("txt")){
+					let sheet = spread.getSheet(0);
+					var columnCount = obj.sheets.Sheet1.columnCount;
+					var rowCount = obj.sheets.Sheet1.rowCount;
+					var str = sheet.getCsv(0, 0, rowCount, columnCount, "\r\n", ",");
+					json = str;
+			}else{
+				var s = spread.toJSON();
+				json = JSON.stringify(s);
+			}
+			console.log("json",json);
 			this.$post('/api/app/ajaxSaveFile',{
 				path:$this.filePath,
 				json:json
@@ -296,23 +319,22 @@ export default {
 };
 </script>
 <style>
-.el-header,
+/* .el-header,
 .el-footer {
   background-color: #b3c0d1;
   color: #333;
   text-align: center;
-  line-height: 60px;
 }
 .el-aside {
   background-color: #d3dce6;
   color: #333;
   text-align: center;
-  line-height: 50px;
+	line-height:5px;
 }
 .el-main {
   background-color: #e9eef3;
   color: #333;
-  text-align: center;
-}
+  text-align: left;
+} */
 
 </style>

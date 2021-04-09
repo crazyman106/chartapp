@@ -1,11 +1,13 @@
 <template>
   <div class="fileList">
-							<el-button
-								size="mini"
-								@click="openDialog"
-								>导入文件</el-button>
-				<el-tree :data="fileTree"  ref="tree" :props="defaultProps" @node-click="handleNodeClick"
-					lazy 	v-if="openTree" 
+<div style="text-align: center;">
+	<el-button
+		size="mini"
+		@click="openDialog"
+		>导入文件</el-button>
+</div>
+				<el-tree :data="fileTree"  :props="defaultProps" @node-click="handleNodeClick"
+					lazy
 					:load="loadNode"
 					:default-checked-keys="default_select"
 					@node-contextmenu="menu"
@@ -194,11 +196,11 @@ export default {
         console.log('右键被点击的value:', Node)
         console.log('右键被点击的element:', element)
         console.log('鼠标点击了树形结构图')
-				//document.addEventListener('click', this.cancelAdd)
+				document.addEventListener('click', this.cancelAdd)
     },
 		cancelAdd(){
-			// this.menuVisible = false
-       //document.removeEventListener('click', this.cancelAdd) 
+			this.menuVisible = false
+      document.removeEventListener('click', this.cancelAdd) 
 		},
 		choseFile(path){
 			var $this = this;
@@ -320,6 +322,7 @@ export default {
 			}
 			//console.log(node);
 			this.ajaxGetPathChile(url,function(data){
+				console.log(data);
 				resolve(data);
 			});
 		},
@@ -328,14 +331,19 @@ export default {
 			this.spread = spread
 			this.spread.fromJSON(s)
 		},
-		
+		///////////////////
 	}
 }
 </script>
 
 <style >
-	.fileList{
-	}
+	
+/* .el-tree .el-tree-node__children{
+	text-align: left;
+}
+.el-tree{
+	text-align: left;
+} */
 .menu__item {
     display: block;
     line-height: 20px;

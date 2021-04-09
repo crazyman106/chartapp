@@ -15,9 +15,7 @@
   color: #2c3e50;
 	min-width:1100px;
 }
-.is-expanded .el-tree-node__children {
-	display: inline !important;
-}
+
 #nav {
   padding: 30px;
 }

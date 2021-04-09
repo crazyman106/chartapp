@@ -160,7 +160,7 @@ export default {
 .el-footer {
   background-color: #b3c0d1;
   color: #333;
-  text-align: center;
+  text-align: left;
   line-height: 60px;
 }
 .bg{
@@ -169,14 +169,14 @@ export default {
 .el-aside {
   background-color: #fff;
   color: #333;
-  text-align: center;
-  line-height: 50px;
-	width:250px !important;
+  text-align: left;
+  line-height:5px;
+	width:290px !important;
 }
 .el-main {
   background-color: #e9eef3;
   color: #333;
-  text-align: center;
+  text-align: left;
 }
 
 </style>
