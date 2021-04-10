@@ -1,6 +1,7 @@
 <template>
   <div class="extab">
-			<Designer @childEvent="getDes" @saveFileTool="saveFileTool"></Designer>
+			<Designer @childEvent="getDes" @saveFileTool="saveFileTool"
+			></Designer>
   </div>
 </template>
 
@@ -57,11 +58,13 @@ export default {
 			}
 		},
 		savefile(e){
+			//console.log("savefile---",e);
+/* 
 			var key = window.event.keyCode ? window.event.keyCode : window.event.which;
-/* 			if (key === 83 && e.ctrlKey) {
+			if (key === 83 && e.ctrlKey) {
 				this.save('hot key')
 					if(this.filePath!=""){
-						this.savefileAjax();
+						this.savefileAjaxTool();
 					}
 					e.preventDefault();
 					e.returnValue=false;
@@ -221,26 +224,31 @@ export default {
 			); */
 			var reader = new FileReader();
 			reader.onload = function(event){
-			    var str = reader.result;
-				var rows = str.split("\r\n");
-				var strArray=[];
-				for(var i in rows){
-					var o =new Object();
-					var liArray = rows[i].split(",");
-					for(var j in liArray){
-						var c = liArray[j];
-						if(c!=undefined && c!=null && c!='' && c.length>=3){
-							o[""+j] =c.substr(1,c.length-2);
+				try{
+					var str = reader.result;
+					var rows = str.split("\r\n");
+					var strArray=[];
+					for(var i in rows){
+						var o =new Object();
+						var liArray = rows[i].split(",");
+						for(var j in liArray){
+							var c = liArray[j];
+							if(c!=undefined && c!=null && c!='' && c.length>=3){
+								o[""+j] =c.substr(1,c.length-2);
+							}
+						}
+						o = dealCol(liArray,num,o);
+						for(var m in o){
+							strArray.push(o);
+							break;
 						}
 					}
-					o = dealCol(liArray,num,o);
-					for(var m in o){
-						strArray.push(o);
-						break;
-					}
+					//console.log(strArray);
+					sheet.setDataSource(strArray, true);
+				}catch(e){
+					console.log("不支持的文件类型");
 				}
-				console.log(strArray);
-				sheet.setDataSource(strArray, true);
+			  
 			};
 			reader.readAsText(json);
 		},

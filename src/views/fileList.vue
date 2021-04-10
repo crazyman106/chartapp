@@ -1,18 +1,22 @@
 <template>
-  <div class="fileList">
-<div style="text-align: center;">
-	<el-button
-		size="mini"
-		@click="openDialog"
-		>导入文件</el-button>
-</div>
-				<el-tree :data="fileTree"  :props="defaultProps" @node-click="handleNodeClick"
-					lazy
-					:load="loadNode"
-					:default-checked-keys="default_select"
-					@node-contextmenu="menu"
-					>
-				</el-tree>	
+  <div class="fileList" @mouseenter="mouseenter" @mouseleave="mouseleave">
+			<div style="text-align: center;">
+				<el-button
+					size="mini"
+					@click="openDialog"
+					>导入文件</el-button>
+ 					<el-button
+						size="mini"
+						@click="createGitPro"
+						>创建仓库</el-button>
+			</div>
+			<el-tree :data="fileTree"  :props="defaultProps" @node-click="handleNodeClick"
+				lazy
+				:load="loadNode"
+				:default-checked-keys="default_select"
+				@node-contextmenu="menu"
+				>
+			</el-tree>	
 <div v-show="menuVisible">
    <ul id="menu" class="menu">
      <li class="menu__item" @click="add(1)">新建文件夹</li>
@@ -21,7 +25,16 @@
 		 <li class="menu__item" @click="v">粘贴</li>
      <li class="menu__item" @click="del">删除</li>
 		 <li class="menu__item" @click="rname">重命名</li>
-		 
+		 <li class="menu__item" @click="createGit()">当前文件夹创建git</li>
+	<!-- 	 <li class="menu__item" @click="createGit()">当前文件夹创建git</li>
+			<el-dropdown @command="git">
+			<span class="el-dropdown-link">
+				git<i class="el-icon-arrow-down el-icon--right"></i>
+			</span>
+			<el-dropdown-menu slot="dropdown">
+				<el-dropdown-item command="create">创建git</el-dropdown-item>
+			</el-dropdown-menu>
+			</el-dropdown> -->
 	<!-- 	 <li class="menu__item" @click="add(2)">新建文件夹-同级</li>
 		 <li class="menu__item" @click="add(4)">新建文件-同级</li> -->
    </ul>
@@ -60,11 +73,76 @@ export default {
 			menuVisible:false,
 			choseNode:null,
 			a:20000,
-			copy:""
+			copy:"",
+			activeTree:false
 			
 		};
 	},
+	mounted() {
+			var $this=this;
+			document.addEventListener('keydown', this.fast);
+	},
 	methods: {
+		createGitPro(){
+			this.$prompt('请输入仓库名称', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消'
+			}).then(({ value }) => {
+				this.$get('/api/app/ajaxRnameFile?old='+$this.choseNode.data.path+"&name="+value,{
+				},function(data){
+					$this.choseNode.parent.loaded = false;
+					$this.choseNode.parent.expand(); 
+					console.log(data);
+					$this.$msg(data.msg);
+				});
+			}).catch((e) => {
+					console.log(e);
+			});
+		},
+		git(flag){
+			if("create"==flag){
+				this.createGit();
+			}
+		},
+		createGit(){
+			var $this =this;
+			this.$get('/api/git/addRemote?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		clone(){
+			var $this =this;
+			this.$get('/api/git/clone?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		fast(e){
+			console.log("fast---",e);
+			var key = window.event.keyCode ? window.event.keyCode : window.event.which;
+			console.log("fast---",key);
+			/* if (key === 67 && e.ctrlKey) {
+				if(this.activeTree) this.c()
+				e.preventDefault();
+				e.returnValue=false;
+				return false;
+			}else if(key === 86 && e.ctrlKey) {
+				if(this.activeTree) this.v()
+				e.preventDefault();
+				e.returnValue=false;
+				return false;
+			} */
+
+		},
+		mouseenter(){
+			this.activeTree=true;
+			console.log("mouseenter",this.activeTree);
+		},
+		mouseleave(){
+			this.activeTree=false;
+			console.log("mouseleave",this.activeTree);
+		},
 		rname(){
 			var $this =this;
 			this.$prompt('请输入文件名', '提示', {
@@ -83,17 +161,22 @@ export default {
 			});
 		},
 		c(){
-			this.copy= this.choseNode.data.path;
+			console.log("cccccccccc");
+			console.log(this.choseNode);
+			if(this.choseNode!=null){
+				this.copy= this.choseNode.data.path;
+			}
+			
 		},
 		v(){
-			if(this.copy==""){
-				$this.msg("请先复制");
+			if(this.copy=="" || this.copy!=null){
+				this.$err("请先复制");
 				return false;
 			}
 			var $this = this;
 			var v = $this.choseNode.data.path;
 			if(v.split(".").length>=2){
-				$this.msg("请选择目标文件夹粘贴");
+				$this.$err("请选择目标文件夹粘贴");
 				return false;
 			}
 			this.$get('/api/app/ajaxVPath?c='+$this.copy+"&v="+v,{
@@ -363,5 +446,12 @@ export default {
    li:hover {
     background-color: #1790ff;
     color: white;
+  }
+	  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
   }
 </style>
