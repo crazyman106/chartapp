@@ -18,7 +18,8 @@ axios.defaults.withCredentials = true
 Vue.prototype.$axios = axios
 
 Vue.prototype.$msg = function (msg){
-	alert(msg);
+	console.log(msg);
+	alert(msg || "处理成功");
 }
 Vue.prototype.$err = function (msg){
 	console.log(msg);

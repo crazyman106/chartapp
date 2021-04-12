@@ -59,9 +59,9 @@ export default {
 	  }
 	},
 	computed: {
-    scrollerHeightWeb: function() {
+    /* scrollerHeightWeb: function() {
 			return this.scrollerHeightWebData;
-    }
+    } */
   },
 	mounted() {
 		window.addEventListener('resize',() => this.measure1(), false)

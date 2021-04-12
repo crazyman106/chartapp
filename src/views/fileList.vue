@@ -5,10 +5,6 @@
 					size="mini"
 					@click="openDialog"
 					>导入文件</el-button>
- 					<el-button
-						size="mini"
-						@click="createGitPro"
-						>创建仓库</el-button>
 			</div>
 			<el-tree :data="fileTree"  :props="defaultProps" @node-click="handleNodeClick"
 				lazy
@@ -17,28 +13,46 @@
 				@node-contextmenu="menu"
 				>
 			</el-tree>	
-<div v-show="menuVisible">
-   <ul id="menu" class="menu">
-     <li class="menu__item" @click="add(1)">新建文件夹</li>
-		 <li class="menu__item" @click="add(3)">新建文件</li>
-		 <li class="menu__item" @click="c">复制</li>
-		 <li class="menu__item" @click="v">粘贴</li>
-     <li class="menu__item" @click="del">删除</li>
-		 <li class="menu__item" @click="rname">重命名</li>
-		 <li class="menu__item" @click="createGit()">当前文件夹创建git</li>
-	<!-- 	 <li class="menu__item" @click="createGit()">当前文件夹创建git</li>
-			<el-dropdown @command="git">
-			<span class="el-dropdown-link">
-				git<i class="el-icon-arrow-down el-icon--right"></i>
-			</span>
-			<el-dropdown-menu slot="dropdown">
-				<el-dropdown-item command="create">创建git</el-dropdown-item>
-			</el-dropdown-menu>
-			</el-dropdown> -->
-	<!-- 	 <li class="menu__item" @click="add(2)">新建文件夹-同级</li>
-		 <li class="menu__item" @click="add(4)">新建文件-同级</li> -->
-   </ul>
-</div>
+		<div v-show="menuVisible" >
+			 <ul id="menu" class="menu">
+				 <li class="menu__item" @click="add(1)">新建文件夹</li>
+				 <li class="menu__item" @click="add(3)">新建文件</li>
+				 <li class="menu__item" @click="c">复制</li>
+				 <li class="menu__item" @click="v">粘贴</li>
+				 <li class="menu__item" @click="del">删除</li>
+				 <li class="menu__item" @click="rname">重命名</li>
+				 <li class="menu__item" 
+					@mouseenter="mouseenterGit" @mouseleave="mouseleaveGit" >git
+					<i class="el-icon-arrow-right el-right"></i>
+					<div class="menu__item_child"  v-show="activeGit">
+						<li class="menu__item_child_item " @click="create">创建</li>
+						<li class="menu__item_child_item " @click="commit">提交-commit</li>
+						<li class="menu__item_child_item " @click="pull">拉取-pull</li>
+						<li class="menu__item_child_item " @click="push">推送-push</li>
+						<li class="menu__item_child_item " ><div class="hx"></div> </li>
+						<li class="menu__item_child_item " @click="fetch">拉取-fetch</li>
+						<li class="menu__item_child_item " @click="merge">合并-merge</li>
+						<li class="menu__item_child_item " @click="getlog">查询记录-log</li>
+					</div>
+				 </li>
+		<!-- 		 <li class="menu__item" @click="createGit">创建</li>
+				 <li class="menu__item" @click="commit">提交</li>
+				 <li class="menu__item" @click="pull">拉取</li>
+				 <li class="menu__item" @click="push">推送</li>
+				 <li class="menu__item" @click="meash">合并</li> -->
+			<!-- 	 <li class="menu__item" @click="add(2)">新建文件夹-同级</li>
+				 <li class="menu__item" @click="add(4)">新建文件-同级</li> -->
+			 </ul>
+		</div>
+		
+		<el-dialog title="日志记录" :visible.sync="logDialog" class="log-dialog">
+			<div v-for="obj in logList" class="log-content">
+				<div class="log-item">
+					<span class="log-date">时间：{{obj.who.when}}</span>
+					<span class="log-detail" @click="logPre(obj.newId.name)">对比</span>
+				</div>
+			</div>
+    </el-dialog>
   </div>
 </template>
 
@@ -54,6 +68,7 @@ export default {
   name: 'fileList',
 	data: function () {
 		return {
+			logDialog:false,
 			spread: {},
 			path:"",
 			routeDialogVisible:false,
@@ -67,6 +82,7 @@ export default {
 				label: 'name',
 				isLeaf:'isLeaf'
 			},
+			logList:[],
 			default_select: [],
 			fileTree:[],
 			resolveInit:null,
@@ -74,7 +90,8 @@ export default {
 			choseNode:null,
 			a:20000,
 			copy:"",
-			activeTree:false
+			activeTree:false,
+			activeGit:false
 			
 		};
 	},
@@ -83,30 +100,66 @@ export default {
 			document.addEventListener('keydown', this.fast);
 	},
 	methods: {
-		createGitPro(){
-			this.$prompt('请输入仓库名称', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消'
-			}).then(({ value }) => {
-				this.$get('/api/app/ajaxRnameFile?old='+$this.choseNode.data.path+"&name="+value,{
-				},function(data){
-					$this.choseNode.parent.loaded = false;
-					$this.choseNode.parent.expand(); 
-					console.log(data);
-					$this.$msg(data.msg);
-				});
-			}).catch((e) => {
-					console.log(e);
+		mouseenterGit(){
+			this.activeGit=true;
+			console.log("mouseenterGit",this.activeGit);
+		},
+		mouseleaveGit(){
+			this.activeGit=false;
+			console.log("mouseleaveGit",this.activeGit);
+		},
+		logPre(e){
+			this.$msg(e);
+		},
+		getlog(){
+			var $this =this;
+			
+			this.$get('/api/git/getLog?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				//$this.$msg(data.msg);
+				console.log(data);
+				$this.logList = data.data;
+				$this.logDialog=true;
 			});
 		},
-		git(flag){
-			if("create"==flag){
-				this.createGit();
-			}
-		},
-		createGit(){
+		create(){
 			var $this =this;
 			this.$get('/api/git/addRemote?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		merge(){
+			var $this =this;
+			this.$get('/api/git/merge?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		fetch(){
+			var $this =this;
+			this.$get('/api/git/fetch?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		commit(){
+			var $this =this;
+			this.$get('/api/git/commit?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		pull(){
+			var $this =this;
+			this.$get('/api/git/pull?localPath='+$this.choseNode.data.path,{
+			},function(data){
+				$this.$msg(data.msg);
+			});
+		},
+		push(){
+			var $this =this;
+			this.$get('/api/git/push?localPath='+$this.choseNode.data.path,{
 			},function(data){
 				$this.$msg(data.msg);
 			});
@@ -274,16 +327,17 @@ export default {
         var menu = document.querySelector('#menu') 
         menu.style.left = MouseEvent.clientX  + 'px'
         menu.style.top = MouseEvent.clientY  + 'px'
-        console.log('右键被点击的event:', MouseEvent)
+       /* console.log('右键被点击的event:', MouseEvent)
         console.log('右键被点击的object:', object)
         console.log('右键被点击的value:', Node)
         console.log('右键被点击的element:', element)
-        console.log('鼠标点击了树形结构图')
+        console.log('鼠标点击了树形结构图') */
 				document.addEventListener('click', this.cancelAdd)
     },
 		cancelAdd(){
 			this.menuVisible = false
-      document.removeEventListener('click', this.cancelAdd) 
+      document.removeEventListener('click', this.cancelAdd);
+			
 		},
 		choseFile(path){
 			var $this = this;
@@ -434,8 +488,8 @@ export default {
     margin-top: 10px;
   }
 .menu {
-		z-index:9999;
-    height: 220px;
+		z-index:801;
+    padding-bottom: 8px;
     width: 130px;
     position: absolute;
     border-radius: 10px;
@@ -454,4 +508,59 @@ export default {
   .el-icon-arrow-down {
     font-size: 12px;
   }
+	.el-icon-arrow-down.el-icon--right{
+		float: right;
+    padding: 5px 10px 0 0;
+	}
+	.el-dropdown{
+		display: block;
+	}
+	.gittip{
+		padding-left:30px;
+	}
+	.menu__item_child{
+    bottom: 0px;
+    position: absolute;
+    left: 140px;
+    border-radius: 3px;
+    border: 1px solid #999999;
+    background-color: #f4f4f4;
+		color:#000000;
+		cursor: pointer;
+		z-index:901;
+	}
+	.menu__item_child_item{
+		padding-left: 10px;
+    width: 100px;
+    margin: 5px;
+    text-align: left;
+	}
+	.menu__item{
+		cursor: pointer;
+	}
+	.menu__item_child li{
+    line-height: 20px;
+    text-align: left;
+    margin-top: 10px;
+		cursor: pointer;
+		list-style-type: none;
+	}
+	.el-right{
+		position: absolute;
+    right: 5px;
+    padding-top: 3px;
+	}
+	.log-dialog{
+	}
+	.log-content{
+	}
+	.log-item{
+		height:30px;
+	}
+	.log-date{
+		width:150px;
+	}
+	.log-detail{
+		padding:1px 15px;
+	}
 </style>
